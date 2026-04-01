@@ -2,6 +2,7 @@ import { useState } from "react";
 import AvailabilityForm from "./components/AvailabilityForm";
 import CourseForm from "./components/CourseForm";
 import PlannerOverview from "./components/PlannerOverview";
+import ScheduleDisplay from "./components/ScheduleDisplay";
 import TaskForm from "./components/TaskForm";
 import "./App.css";
 
@@ -9,6 +10,10 @@ function App() {
   const [courses, setCourses] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [availableHoursPerDay, setAvailableHoursPerDay] = useState("");
+  const [schedule, setSchedule] = useState([]);
+  const [unscheduledTasks, setUnscheduledTasks] = useState([]);
+  const [isGeneratingSchedule, setIsGeneratingSchedule] = useState(false);
+  const [scheduleError, setScheduleError] = useState("");
 
   function addCourse(courseName) {
     const newCourse = {
@@ -31,6 +36,53 @@ function App() {
 
   function saveAvailableHours(hours) {
     setAvailableHoursPerDay(hours);
+  }
+
+  async function generateSchedule() {
+    if (tasks.length === 0) {
+      setScheduleError("Add at least one task before generating a schedule.");
+      setSchedule([]);
+      setUnscheduledTasks([]);
+      return;
+    }
+
+    if (!availableHoursPerDay) {
+      setScheduleError("Save your available study hours per day first.");
+      setSchedule([]);
+      setUnscheduledTasks([]);
+      return;
+    }
+
+    setIsGeneratingSchedule(true);
+    setScheduleError("");
+
+    try {
+      const response = await fetch("http://127.0.0.1:5000/api/schedule", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tasks,
+          availableHoursPerDay,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Could not generate the schedule.");
+      }
+
+      setSchedule(data.schedule);
+      setUnscheduledTasks(data.unscheduledTasks);
+    } catch (error) {
+      setScheduleError(error.message);
+      setSchedule([]);
+      setUnscheduledTasks([]);
+    } finally {
+      setIsGeneratingSchedule(false);
+    }
   }
 
   return (
@@ -60,6 +112,13 @@ function App() {
             courses={courses}
             tasks={tasks}
             availableHoursPerDay={availableHoursPerDay}
+          />
+          <ScheduleDisplay
+            schedule={schedule}
+            unscheduledTasks={unscheduledTasks}
+            isGeneratingSchedule={isGeneratingSchedule}
+            scheduleError={scheduleError}
+            onGenerateSchedule={generateSchedule}
           />
         </section>
       </div>
