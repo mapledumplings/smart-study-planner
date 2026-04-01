@@ -32,6 +32,7 @@ function PlannerOverview({ courses, tasks, availableHoursPerDay }) {
                 <li className="overview-item" key={task.id}>
                   <strong>{task.title}</strong>
                   <span className="overview-label">{task.type}</span>
+                  <p className="helper-text">Subject: {task.subject || "Not set"}</p>
                   <p className="helper-text">Due date: {task.dueDate || "Not set"}</p>
                   <p className="helper-text">
                     Study hours: {task.estimatedHours || "Not set"}

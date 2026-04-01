@@ -2,6 +2,7 @@ import { useState } from "react";
 
 const initialTaskForm = {
   title: "",
+  subject: "",
   type: "Assignment",
   dueDate: "",
   estimatedHours: "",
@@ -30,6 +31,7 @@ function TaskForm({ onAddTask }) {
 
     onAddTask({
       title: taskForm.title.trim(),
+      subject: taskForm.subject.trim(),
       type: taskForm.type,
       dueDate: taskForm.dueDate,
       estimatedHours: taskForm.estimatedHours,
@@ -58,6 +60,19 @@ function TaskForm({ onAddTask }) {
             type="text"
             placeholder="Example: Chapter 4 quiz"
             value={taskForm.title}
+            required
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-row">
+          <label htmlFor="subject">Subject</label>
+          <input
+            id="subject"
+            name="subject"
+            type="text"
+            placeholder="Example: Math"
+            value={taskForm.subject}
             required
             onChange={handleChange}
           />
