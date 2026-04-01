@@ -21,13 +21,16 @@ function AvailabilityForm({ availableHoursPerDay, onSaveAvailability }) {
           <input
             id="hoursPerDay"
             type="number"
-            min="0"
+            min="0.5"
             step="0.5"
             placeholder="Example: 2"
             value={hoursPerDay}
             required
             onChange={(event) => setHoursPerDay(event.target.value)}
           />
+          <p className="helper-text">
+            Use the amount of time you can usually commit on a normal day.
+          </p>
         </div>
 
         <button className="button" type="submit">

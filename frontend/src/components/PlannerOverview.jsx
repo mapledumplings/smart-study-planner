@@ -1,12 +1,32 @@
 function PlannerOverview({ courses, tasks, availableHoursPerDay }) {
+  const totalEstimatedHours = tasks.reduce(
+    (total, task) => total + Number(task.estimatedHours || 0),
+    0
+  );
+
   return (
     <section className="card">
       <div className="card-header">
-        <h2>Saved Information</h2>
-        <p>This summary updates as you submit each form.</p>
+        <h2>Planner Snapshot</h2>
+        <p>This sidebar updates as you build the planner.</p>
       </div>
 
       <div className="form-grid">
+        <div className="summary-band">
+          <div className="summary-chip">
+            <strong>{courses.length}</strong>
+            <span>courses</span>
+          </div>
+          <div className="summary-chip">
+            <strong>{tasks.length}</strong>
+            <span>tasks</span>
+          </div>
+          <div className="summary-chip">
+            <strong>{totalEstimatedHours}</strong>
+            <span>study hours</span>
+          </div>
+        </div>
+
         <div>
           <h3>Courses</h3>
           {courses.length === 0 ? (
@@ -48,7 +68,7 @@ function PlannerOverview({ courses, tasks, availableHoursPerDay }) {
           <h3>Available Hours Per Day</h3>
           <p className="overview-item">
             {availableHoursPerDay
-              ? `${availableHoursPerDay} hours`
+              ? `${availableHoursPerDay} hours available each day`
               : "No daily study hours saved yet."}
           </p>
         </div>
