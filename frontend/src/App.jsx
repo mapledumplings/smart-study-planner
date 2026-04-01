@@ -14,6 +14,35 @@ function App() {
   const [unscheduledTasks, setUnscheduledTasks] = useState([]);
   const [isGeneratingSchedule, setIsGeneratingSchedule] = useState(false);
   const [scheduleError, setScheduleError] = useState("");
+  const plannedDays = schedule.filter((day) => day.tasks.length > 0).length;
+  const totalStudyHours = tasks.reduce(
+    (total, task) => total + Number(task.estimatedHours || 0),
+    0
+  );
+  const setupProgress = [
+    courses.length > 0,
+    tasks.length > 0,
+    Number(availableHoursPerDay) > 0,
+    plannedDays > 0,
+  ].filter(Boolean).length;
+  const setupSteps = [
+    {
+      title: "Add courses",
+      detail: "Create a simple list of the classes you are managing this term.",
+    },
+    {
+      title: "Add tasks",
+      detail: "Enter assignments, exams, projects, and the hours they may need.",
+    },
+    {
+      title: "Save availability",
+      detail: "Tell the planner how many study hours you realistically have each day.",
+    },
+    {
+      title: "Generate plan",
+      detail: "Get a day-by-day study schedule that spreads work before deadlines.",
+    },
+  ];
 
   function addCourse(courseName) {
     const newCourse = {
@@ -88,13 +117,54 @@ function App() {
   return (
     <main className="app">
       <section className="hero">
-        <p className="eyebrow">Study Planner Setup</p>
-        <h1>Smart Study Planner</h1>
-        <p className="description">
-          Start by entering the basic information your planner will need. These
-          forms collect courses, study tasks, and the number of hours available
-          each day.
-        </p>
+        <div className="hero-copy">
+          <p className="eyebrow">Smart Study Planner</p>
+          <h1>Turn a messy list of deadlines into a realistic study plan.</h1>
+          <p className="description">
+            This project helps students organize courses, break down upcoming
+            work, and generate a day-by-day schedule based on urgency,
+            difficulty, and available study time.
+          </p>
+          <p className="hero-note">
+            The interface stays simple on purpose, but the experience is
+            polished enough to feel like a finished project demo.
+          </p>
+        </div>
+
+        <div className="hero-stats">
+          <article className="hero-stat">
+            <p className="hero-stat-label">Courses</p>
+            <strong>{courses.length}</strong>
+            <span>subjects tracked</span>
+          </article>
+          <article className="hero-stat">
+            <p className="hero-stat-label">Tasks</p>
+            <strong>{tasks.length}</strong>
+            <span>{totalStudyHours} planned hours</span>
+          </article>
+          <article className="hero-stat hero-stat-accent">
+            <p className="hero-stat-label">Progress</p>
+            <strong>{setupProgress}/4</strong>
+            <span>{plannedDays > 0 ? `${plannedDays} study days planned` : "ready for schedule generation"}</span>
+          </article>
+        </div>
+      </section>
+
+      <section className="card roadmap-card">
+        <div className="card-header">
+          <h2>Planner Workflow</h2>
+          <p>Follow these steps to build a complete study plan.</p>
+        </div>
+
+        <div className="roadmap-grid">
+          {setupSteps.map((step, index) => (
+            <article className="roadmap-step" key={step.title}>
+              <div className="step-number">0{index + 1}</div>
+              <h3>{step.title}</h3>
+              <p>{step.detail}</p>
+            </article>
+          ))}
+        </div>
       </section>
 
       <div className="layout">

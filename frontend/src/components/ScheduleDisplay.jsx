@@ -15,6 +15,10 @@ function ScheduleDisplay({
   onGenerateSchedule,
 }) {
   const studyDays = schedule.filter((day) => day.tasks.length > 0);
+  const totalScheduledHours = studyDays.reduce(
+    (total, day) => total + Number(day.totalHours || 0),
+    0
+  );
 
   return (
     <section className="card">
@@ -41,36 +45,55 @@ function ScheduleDisplay({
       {scheduleError ? <p className="error-message">{scheduleError}</p> : null}
 
       {studyDays.length === 0 ? (
-        <p className="empty-state">
-          No schedule yet. Add tasks, save your daily study hours, and generate
-          a plan.
-        </p>
-      ) : (
-        <div className="schedule-list">
-          {studyDays.map((day) => (
-            <article className="day-plan" key={day.date}>
-              <div className="day-plan-header">
-                <h3>{formatDate(day.date)}</h3>
-                <span className="hours-badge">{day.totalHours} hours</span>
-              </div>
-
-              <div className="schedule-rows">
-                {day.tasks.map((task) => (
-                  <div
-                    className="schedule-row"
-                    key={`${day.date}-${task.subject}-${task.title}`}
-                  >
-                    <div className="schedule-main">
-                      <p className="schedule-subject">{task.subject}</p>
-                      <p className="schedule-title">{task.title}</p>
-                    </div>
-                    <p className="schedule-hours">{task.hours} hrs</p>
-                  </div>
-                ))}
-              </div>
-            </article>
-          ))}
+        <div className="schedule-empty">
+          <p className="empty-state">
+            No schedule yet. Add tasks, save your daily study hours, and
+            generate a plan.
+          </p>
         </div>
+      ) : (
+        <>
+          <div className="schedule-summary">
+            <div className="summary-chip">
+              <strong>{studyDays.length}</strong>
+              <span>study days</span>
+            </div>
+            <div className="summary-chip">
+              <strong>{totalScheduledHours}</strong>
+              <span>hours scheduled</span>
+            </div>
+            <div className="summary-chip">
+              <strong>{unscheduledTasks.length}</strong>
+              <span>items still short on time</span>
+            </div>
+          </div>
+
+          <div className="schedule-list">
+            {studyDays.map((day) => (
+              <article className="day-plan" key={day.date}>
+                <div className="day-plan-header">
+                  <h3>{formatDate(day.date)}</h3>
+                  <span className="hours-badge">{day.totalHours} hours</span>
+                </div>
+
+                <div className="schedule-rows">
+                  {day.tasks.map((task) => (
+                    <div
+                      className="schedule-row"
+                      key={`${day.date}-${task.subject}-${task.title}`}
+                    >
+                      <div className="schedule-main">
+                        <p className="schedule-subject">{task.subject}</p>
+                        <p className="schedule-title">{task.title}</p>
+                      </div>
+                      <p className="schedule-hours">{task.hours} hrs</p>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        </>
       )}
 
       {unscheduledTasks.length > 0 ? (
